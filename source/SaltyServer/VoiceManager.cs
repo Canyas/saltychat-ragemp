@@ -81,7 +81,11 @@ namespace SaltyServer
 
             foreach (VoiceClient cl in this.VoiceClients)
             {
-                client.TriggerEvent(SaltyShared.Event.SaltyChat_UpdateClient, cl.Player.Handle.Value, cl.TeamSpeakName, cl.VoiceRange);
+                // The VoiceClient of the connected player got already added to _voiceClients which means its also part of the loop (Prevent multiple UpdateClient Events for the same player)
+                if (cl != voiceClient)
+                {
+                    client.TriggerEvent(SaltyShared.Event.SaltyChat_UpdateClient, cl.Player.Handle.Value, cl.TeamSpeakName, cl.VoiceRange);
+                }
 
                 cl.Player.TriggerEvent(SaltyShared.Event.SaltyChat_UpdateClient, voiceClient.Player.Handle.Value, voiceClient.TeamSpeakName, voiceClient.VoiceRange);
             }
