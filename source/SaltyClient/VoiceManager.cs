@@ -691,35 +691,35 @@ namespace SaltyClient
         private void PlayerStateUpdate()
         {
             RAGE.Vector3 playerPosition = Player.LocalPlayer.Position;
+            List<PlayerState> playerStates = new List<PlayerState>();
 
             foreach (var voiceClient in this.VoiceClients)
             {
                 RAGE.Vector3 nPlayerPosition = voiceClient.Player.Position;
 
-                this.ExecuteCommand(
-                    new PluginCommand(
-                        Command.PlayerStateUpdate,
-                        this.ServerUniqueIdentifier,
-                        new PlayerState(
+                PlayerState state = new PlayerState(
                             voiceClient.TeamSpeakName,
                             nPlayerPosition,
                             voiceClient.VoiceRange,
                             voiceClient.IsAlive
-                        )
-                    )
-                );
+                        );
+                playerStates.Add(state);
             }
 
             this.ExecuteCommand(
-                new PluginCommand(
-                    Command.SelfStateUpdate,
-                    this.ServerUniqueIdentifier,
-                    new SelfState(
-                        playerPosition,
-                        RAGE.Game.Cam.GetGameplayCamRot(0).Z
+                    new PluginCommand(
+                        Command.BulkUpdate,
+                        this.ServerUniqueIdentifier,
+                        new BulkUpdate(
+                            playerStates,
+                            new SelfState(
+                                playerPosition,
+                                RAGE.Game.Cam.GetGameplayCamRot(0).Z,
+                                
+                            )
+                        )
                     )
-                )
-            );
+                );
         }
         #endregion
 
